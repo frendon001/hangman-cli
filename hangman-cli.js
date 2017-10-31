@@ -19,12 +19,36 @@ function HangmanCLI() {
 		"jigsaw", "jogging", "lucky", "luxury", "microwave", "pixel", "puppy",
 		"staff", "strength", "transcript", "vortex", "wizard", "woozy", "wristwatch"
 	];
+	this.checkGuess = function(playerGuess) {
+		console.log("CHECKGUESS");
+		//Compare the playerGuess against current word and determine if guess is correct
+		if (currentWordArr.indexOf(playerGuess) > -1) {
+
+			//Guess is correct, update game
+			this.hangmanWord.applyGuess();
+			console.log(this.hangmanWord.currentWordState);
+
+		} else {
+
+			//Incorrect Guess - Decrease number of guesses
+			this.remainingGuesses -= 1;
+			console.log(this.hangmanWord.currentWordState);
+
+		}
+
+		//Check if word guess is complete
+		if (this.hangmanWord.currentWord === this.hangmanWord.currentWordState) {
+			//Increment win count and use new word
+			this.wins++;
+			this.newWord();
+		}
+	};
 };
 
-HangmanCLI.prototype.continue = function() {
+HangmanCLI.prototype.continueGame = function() {
 	// ask player to enter a guess
 	inquirer.prompt([{
-		type: "confirm"
+		type: "confirm",
 		name: "continue",
 		message: "Would you like to continue playing? (y/n) ",
 		default: true
@@ -57,60 +81,40 @@ HangmanCLI.prototype.newWord = function() {
 	}
 };
 
-HangmanCLI.prototype.checkGuess = function(playerGuess) {
-		
-		//Compare the playerGuess against current word and determine if guess is correct
-		if (currentWordArr.indexOf(playerGuess) > -1) {
-
-			//Guess is correct, update game
-			this.hangmanWord.applyGuess();
-
-
-		} else {
-
-			//Incorrect Guess - Decrease number of guesses
-			this.remainingGuesses -= 1;
-			console.log(this.hangmanWord.currentWordState);
-
-		}
-
-		//Check if word guess is complete
-		if (this.hangmanWord.currentWord === this.hangmanWord.currentWordState) {
-			//Increment win count and use new word
-			this.wins++;
-			this.newWord();
-		}
-};
-
 HangmanCLI.prototype.play = function() {
 
 	if (this.newGame) {
 		this.newGame = false;
 		this.newWord();
+		console.log("Guess a letter\n" + this.hangmanWord.currentWordState);
 
 	}
 
 	// check game parameters to continue prompting guesses
-	if (this.remainingGuesses > 0 && gameOver === false) {
-		var promptMessage = "Guess a letter:\n" + "";
+	if (this.remainingGuesses > 0 && this.gameOver === false) {
+		var promptMessage = "Guess a letter: ";
+		var letter = "??";
 		// ask player to enter a guess
 		inquirer.prompt([{
-			type: "input"
+			type: "input",
 			name: "letterGuess",
 			message: promptMessage
 
 		}]).then(function(answers) {
-			
-			this.checkGuess();
+			console.log(answers.letterGuess);
+			letter = answers.letterGuess;
+			this.checkGuess(answers.letterGuess);
 
-			// run the askquestion function again so as to either end the loop or ask the questions again
-			play();
+			// run play function to keep playing.
+			//this.play();
+		}).catch(function() {
+			console.log("Promise Rejected");
 		});
-		// else to ask user to start over
+
 	}
 	// ran out of guesses, ask to continue
-	if (this.remainingGuesses === 0 && gameOver === false) {
-		this.continue();
+	if (this.remainingGuesses === 0 && this.gameOver === false) {
+		this.continueGame();
 	}
 
 };

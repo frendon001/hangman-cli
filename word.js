@@ -6,11 +6,11 @@ function Word(wordList, wordsUsed) {
 	this.wordsUsed = wordsUsed;
 	this.currentWord = "";
 	this.currentWordState = "";
-	this.currentWordArr = [];
-
 };
 
 Word.prototype.newWord = function() {
+	//regex for ensurre only capitalized characters
+	var isCapLetterReg = /[A-Z]/g;
 	//randomly select a word to guess from wordList
 	if (this.wordsUsed.length === 0) {
 
@@ -18,8 +18,6 @@ Word.prototype.newWord = function() {
 		this.currentWord = this.wordList[Math.floor(Math.random() * this.wordList.length)].toUpperCase();
 		//add the randomly selected word to the wordsUsed list
 		this.wordsUsed.push(this.currentWord);
-		// //store current word as array
-		// this.currentWordArr = this.currentWord.split("");
 		//set place holders for currentWordState variable
 		//used to hide word at the start of new word
 		this.currentWordState = this.currentWord.replace(isCapLetterReg, "_");
@@ -40,8 +38,6 @@ Word.prototype.newWord = function() {
 		this.currentWord = this.wordList[Math.floor(Math.random() * this.wordList.length)].toUpperCase();
 		//add the randomly selected word to the wordsUsed list
 		this.wordsUsed.push(this.currentWord);
-		// //store current word as array
-		// this.currentWordArr = this.currentWord.split("");
 		//set place holders for currentWordState variable
 		//used to hide word at the start of new word
 		this.currentWordState = this.currentWord.replace(isCapLetterReg, "_");
@@ -52,7 +48,7 @@ Word.prototype.newWord = function() {
 
 
 Word.prototype.applyGuess = function(letter) {
-	var letterGuess = new Letter(this.currentWord, this.currentWordState, letter);
+	var letterGuess = new Letter(this.currentWord, this.currentWordState, letter.toUpperCase());
 	this.currentWordState = letterGuess.guessProgressUpdate();
 	console.log(this.currentWordState);
 
