@@ -1,0 +1,23 @@
+{
+  "name": "hangman-cli",
+  "version": "1.0.0",
+  "description": "Hangman command-line game",
+  "main": "hangman-cli.js",
+  "dependencies": {
+    "inquirer": "^3.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/frendon001/hangman-cli.git"
+  },
+  "author": "Fausto Rendon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/frendon001/hangman-cli/issues"
+  },
+  "homepage": "https://github.com/frendon001/hangman-cli#readme"
+}
