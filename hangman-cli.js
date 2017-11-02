@@ -5,47 +5,88 @@ var maxGuesses = 10;
 
 function HangmanCLI() {
 	this.wins = 0;
-	this.loses = 0;
 	this.remainingGuesses = maxGuesses;
 	this.gameOver = false;
 	this.newGame = true;
 	this.hangmanWord = null;
-	this.wordsUsed = [];
 	//create array of possible guess options
-	this.wordList = ["absurd", "abyss", "avenue", "awkward", "bandwagon",
-		"banjo", "blizzard", "bookworm", "buffalo", "buffoon", "buzzwords",
-		"cobweb", "cycle", "espionage", "fishhook", "fixable", "flapjack",
-		"funny", "galaxy", "glowworm", "glyph", "ivory", "jackpot", "jelly",
-		"jigsaw", "jogging", "lucky", "luxury", "microwave", "pixel", "puppy",
-		"staff", "strength", "transcript", "vortex", "wizard", "woozy", "wristwatch"
-	];
+	// this.wordList = ["absurd", "abyss", "avenue", "awkward", "bandwagon",
+	// 	"banjo", "blizzard", "bookworm", "buffalo", "buffoon", "buzzwords",
+	// 	"cobweb", "cycle", "espionage", "fishhook", "fixable", "flapjack",
+	// 	"funny", "galaxy", "glowworm", "glyph", "ivory", "jackpot", "jelly",
+	// 	"jigsaw", "jogging", "lucky", "luxury", "microwave", "pixel", "puppy",
+	// 	"staff", "strength", "transcript", "vortex", "wizard", "woozy", "wristwatch"
+	// ];
 	this.checkGuess = function(playerGuess) {
 		console.log("CHECKGUESS");
+		console.log(this.hangmanWord.currentWord);
+		var wordArr = this.hangmanWord.currentWord.split("");
+		console.log(wordArr);
 		//Compare the playerGuess against current word and determine if guess is correct
-		if (currentWordArr.indexOf(playerGuess) > -1) {
+		if (wordArr.indexOf(playerGuess.toUpperCase()) > -1) {
 
 			//Guess is correct, update game
-			this.hangmanWord.applyGuess();
+			this.hangmanWord.applyGuess(playerGuess);
 			console.log(this.hangmanWord.currentWordState);
+			console.log("correct");
 
 		} else {
 
 			//Incorrect Guess - Decrease number of guesses
 			this.remainingGuesses -= 1;
 			console.log(this.hangmanWord.currentWordState);
-
+			console.log("Incorrect");
+			console.log(this.remainingGuesses + " guesses remaining.");
 		}
 
 		//Check if word guess is complete
 		if (this.hangmanWord.currentWord === this.hangmanWord.currentWordState) {
 			//Increment win count and use new word
+			console.log("You got it right! Next word.")
 			this.wins++;
+			//this.hangmanWord.newWord();
 			this.newWord();
+			
 		}
 	};
 };
 
-HangmanCLI.prototype.continueGame = function() {
+HangmanCLI.prototype.newWord = function() {
+	if (this.hangmanWord) {
+
+
+		//add create a new word
+		//this.hangmanWord = new Word();
+		this.remainingGuesses = maxGuesses;
+		console.log(this.hangmanWord);
+		this.hangmanWord.newWord();
+		console.log("new word complete")
+		console.log(this.hangmanWord.currentWordState);
+	} else {
+		//add create a new word
+		this.hangmanWord = new Word();
+		this.remainingGuesses = maxGuesses;
+		console.log(this.hangmanWord);
+		this.hangmanWord.newWord();
+		console.log("new word complete")
+		console.log(this.hangmanWord.currentWordState);
+		//var word = this.hangmanWord.newWord();
+		// if (word) {
+		// 	this.wordsUsed.push(word);
+		// }
+	}
+
+};
+
+HangmanCLI.prototype.isGameOver = function() {
+	console.log(this.hangmanWord.wordList);
+	//console.log(this.hangmanWord.totalWords);
+	if (this.hangmanWord.wordList.length <= 0) {
+		this.gameOver = true;
+	}
+};
+
+var continueGame = function(hangman) {
 	// ask player to enter a guess
 	inquirer.prompt([{
 		type: "confirm",
@@ -56,8 +97,8 @@ HangmanCLI.prototype.continueGame = function() {
 	}]).then(function(answers) {
 		// give the player 12 more guesses
 		if (answers.continue === true) {
-			this.remainingGuesses = maxGuesses;
-			this.play();
+			hangman.remainingGuesses = maxGuesses;
+			play(hangman);
 		} else {
 			console.log("Thank you for playing!\nBetter luck next time.")
 		}
@@ -66,32 +107,19 @@ HangmanCLI.prototype.continueGame = function() {
 	});
 };
 
-HangmanCLI.prototype.newWord = function() {
+var play = function(hangman) {
 
-	if (this.wordList.length === this.wordsUsed.length) {
-		this.gameOver = true;
-	} else {
-		//add create a new word
-		this.hangmanWord = new Word(this.wordList, this.wordsUsed);
-		this.remainingGuesses = maxGuesses;
-		var word = this.hangmanWord.newWord();
-		if (word) {
-			this.wordsUsed.push(word);
-		}
-	}
-};
-
-HangmanCLI.prototype.play = function() {
-
-	if (this.newGame) {
-		this.newGame = false;
-		this.newWord();
-		console.log("Guess a letter\n" + this.hangmanWord.currentWordState);
+	if (hangman.newGame) {
+		hangman.newGame = false;
+		hangman.newWord();
+		console.log("Guess a letter\n" + hangman.hangmanWord.currentWordState);
 
 	}
+
+	hangman.isGameOver();
 
 	// check game parameters to continue prompting guesses
-	if (this.remainingGuesses > 0 && this.gameOver === false) {
+	if (hangman.remainingGuesses > 0 && hangman.gameOver === false) {
 		var promptMessage = "Guess a letter: ";
 		var letter = "??";
 		// ask player to enter a guess
@@ -102,19 +130,22 @@ HangmanCLI.prototype.play = function() {
 
 		}]).then(function(answers) {
 			console.log(answers.letterGuess);
-			letter = answers.letterGuess;
-			this.checkGuess(answers.letterGuess);
+			hangman.checkGuess(answers.letterGuess);
 
 			// run play function to keep playing.
-			//this.play();
+			play(hangman);
 		}).catch(function() {
 			console.log("Promise Rejected");
 		});
 
 	}
 	// ran out of guesses, ask to continue
-	if (this.remainingGuesses === 0 && this.gameOver === false) {
-		this.continueGame();
+	if (hangman.remainingGuesses === 0 && hangman.gameOver === false) {
+		continueGame(hangman);
+	}
+
+	if (hangman.gameOver === true) {
+		console.log("Congratulations you have guessed all the words.")
 	}
 
 };
@@ -123,4 +154,4 @@ HangmanCLI.prototype.play = function() {
 
 var myHangmanGame = new HangmanCLI();
 
-myHangmanGame.play();
+play(myHangmanGame);
