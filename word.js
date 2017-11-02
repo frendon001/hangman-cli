@@ -8,8 +8,8 @@ function Word() {
 	this.currentWordState = "";
 	this.wordsUsed = [];
 	//create array of possible guess options
-	this.wordList = ["attention", "puppy", "bandwagon",
-		"strength", "galaxy", "buffalo", "cobweb"
+	this.wordList = ["attention", "puppy",
+		"strength", "galaxy", "buffalo"
 	];
 	this.totalWords = this.wordList.length;
 };

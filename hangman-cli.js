@@ -27,7 +27,7 @@ function HangmanCLI() {
 		//Check if word guess is complete
 		if (this.hangmanWord.currentWord === this.hangmanWord.currentWordState) {
 			//Increment win count and use new word
-			
+
 			this.wins++;
 			//this.hangmanWord.newWord();
 			this.newWord();
@@ -41,7 +41,7 @@ HangmanCLI.prototype.newWord = function() {
 		this.remainingGuesses = maxGuesses;
 		this.hangmanWord.newWord();
 		//console.log(this.hangmanWord.currentWordState);
-	//create new word object for game
+		//create new word object for game
 	} else {
 		//add create a new word
 		this.hangmanWord = new Word();
@@ -86,7 +86,7 @@ var play = function(hangman) {
 		hangman.newGame = false;
 		console.log("Enter a letter to guess the following word:");
 		hangman.newWord();
-		
+
 
 	}
 
@@ -100,7 +100,15 @@ var play = function(hangman) {
 		inquirer.prompt([{
 			type: "input",
 			name: "letterGuess",
-			message: promptMessage
+			message: promptMessage,
+			validate: function(value) {
+				var pass = value.match(/^[A-Za-z]$/i);
+				if (pass) {
+					return true;
+				}
+
+				return 'Please enter a valid single letter guess.';
+			}
 
 		}]).then(function(answers) {
 			//check letter guess
