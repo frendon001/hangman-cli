@@ -7,7 +7,7 @@ function Letter(word, guessProgress, letterGuess) {
 
 
 Letter.prototype.guessProgressUpdate = function() {
-
+	//update text to show letters guessed
 	var newGuessProgress = this.guessProgress.split("");
 	var wordArr = this.word.split("");
 	for (var i = this.guessProgress.length - 1; i >= 0; i--) {
